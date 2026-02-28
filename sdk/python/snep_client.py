@@ -1,21 +1,37 @@
+# sdk/python/snep_client.py
 import requests
-import hashlib
-import json
 
 class SNEPClient:
-    def __init__(self, server_url="http://localhost:5000"):
-        self.server_url = server_url
-
-    def fetch(self, collection, id):
-        r = requests.get(f"{self.server_url}/{collection}/{id}")
-        r.raise_for_status()
-        return r.json()
+    def __init__(self, server_url="http://127.0.0.1:5000"):
+        self.server_url = server_url.rstrip("/")
 
     def publish(self, collection, id, data):
-        r = requests.post(f"{self.server_url}/{collection}/{id}", json=data)
-        r.raise_for_status()
-        return r.json()
+        """
+        Publish data to the SNEP server
+        :param collection: collection name (str)
+        :param id: identifier (str)
+        :param data: dictionary to store
+        :return: response JSON
+        """
+        url = f"{self.server_url}/{collection}/{id}"
+        try:
+            r = requests.post(url, json=data)
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException as e:
+            return {"error": str(e)}
 
-    @staticmethod
-    def hash_content(data):
-        return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
+    def fetch(self, collection, id):
+        """
+        Fetch data from the SNEP server
+        :param collection: collection name (str)
+        :param id: identifier (str)
+        :return: response JSON
+        """
+        url = f"{self.server_url}/{collection}/{id}"
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            return r.json()
+        except requests.RequestException as e:
+            return {"error": str(e)}

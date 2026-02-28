@@ -1,13 +1,15 @@
-from utils.crypto import sha256_hash
-
 class Storage:
     def __init__(self):
-        self._store = {}
+        self.db = {}
 
-    def save(self, data: dict) -> str:
-        key = sha256_hash(str(data))
-        self._store[key] = data
-        return key
+    def save(self, collection, item_id, data):
+        if collection not in self.db:
+            self.db[collection] = {}
+        self.db[collection][item_id] = data
+        return True
 
-    def fetch(self, key: str):
-        return self._store.get(key)
+    def load(self, collection, item_id):
+        try:
+            return self.db[collection][item_id]
+        except KeyError:
+            return None

@@ -1,20 +1,22 @@
+# demo/demo_app.py
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # ensure SNEP root is on path
 
-import hashlib
+# make sure project root is on sys.path so "sdk", "storage", "utils" packages resolve
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 import json
-from pyclient.snep_client import SNEPClient  # updated import
-from utils.crypto import encrypt_message, decrypt_message
+import hashlib
+from sdk.pyclient.snep_client import SNEPClient
 
 def main():
-    key = b'mysecretkey123456'  # example symmetric key
-    client = SNEPClient(key=key)  # SNEPClient init no longer uses node_urls
+    key = "supersecretkey"  # demo symmetric key (replace for real use)
+    nodes = ["http://localhost:5000", "http://localhost:5001"]  # <-- pass nodes list
+    client = SNEPClient(key=key, nodes=nodes)
 
-    example_data = {
-        "recipe": "pumpkin soup",
-        "steps": ["cut pumpkin", "boil", "blend"]
-    }
+    example_data = {"recipe": "pumpkin soup", "steps": ["cut pumpkin", "boil", "blend"]}
 
     print("Publishing data...")
     published = client.publish("recipes", "42", example_data)

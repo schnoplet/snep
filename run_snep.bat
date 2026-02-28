@@ -1,16 +1,18 @@
 @echo off
+title SNEP Demo Launcher
 setlocal
 
 echo Starting node1 server...
-start "Node1" cmd /k "python nodes\node1.py"
+start "Node1" cmd /k python -W ignore nodes\node1.py
 
 echo Starting node2 server...
-start "Node2" cmd /k "python nodes\node2.py"
+start "Node2" cmd /k python -W ignore nodes\node2.py
 
-timeout /t 3 /nobreak >nul
+REM wait for servers to initialize
+timeout /t 4 /nobreak >nul
 
 echo Running demo client...
-python demo\demo_app.py
+python -W ignore demo\demo_app.py
 
 echo Demo finished.
 pause

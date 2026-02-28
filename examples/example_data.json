@@ -1,0 +1,12 @@
+{
+  "meta": {
+    "id": "snep://alice.example/recipes/1@v1",
+    "publisher": "did:web:alice.example",
+    "schema": "snep/recipe/1"
+  },
+  "data": {
+    "title": "Chocolate Cake",
+    "ingredients": ["flour", "sugar", "cocoa", "eggs"],
+    "steps": ["mix", "bake", "cool", "serve"]
+  }
+}

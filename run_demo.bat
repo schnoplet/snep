@@ -1,1 +1,0 @@
-python -W ignore -m demo.demo_app

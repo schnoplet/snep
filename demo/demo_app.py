@@ -1,41 +1,33 @@
-# demo/demo_app.py
-# Simple SNEP client demo
+from sdk.python.snep_client import SNEPClient
+from utils.crypto import generate_key, sha256_hash
 
-import sys, os
-import hashlib
-import requests
+def main():
+    key = generate_key()
 
-# Ensure sdk folder is in path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'sdk', 'python'))
+    # SNEP client pointing to node1
+    client = SNEPClient(
+        key=key,
+        node_urls=["http://localhost:5000", "http://localhost:5001"]
+    )
 
-try:
-    from snep_client import SNEPClient
-except ImportError:
-    # Simple fallback demo client
-    class SNEPClient:
-        def __init__(self, server_url):
-            self.server_url = server_url
+    example_data = {
+        "recipe": "pumpkin soup",
+        "steps": ["cut pumpkin", "boil", "blend"]
+    }
 
-        def publish(self, collection, id, data):
-            r = requests.post(f"{self.server_url}/{collection}/{id}", json=data)
-            return r.json()
+    # publish to nodes
+    res = client.publish("recipes", "42", example_data)
+    print("Published:", res)
 
-        def fetch(self, collection, id):
-            r = requests.get(f"{self.server_url}/{collection}/{id}")
-            return r.json()
+    # fetch from node1
+    fetched1 = client.fetch_from_node("http://localhost:5000", "recipes", "42")
+    print("Fetched from node1:", fetched1)
+    print("SHA256 node1:", sha256_hash(str(fetched1)))
 
-# Demo run
-client = SNEPClient("http://127.0.0.1:5000")
-example_data = {"recipe": "pumpkin soup", "steps": ["cut pumpkin", "boil", "blend"]}
+    # fetch from node2
+    fetched2 = client.fetch_from_node("http://localhost:5001", "recipes", "42")
+    print("Fetched from node2:", fetched2)
+    print("SHA256 node2:", sha256_hash(str(fetched2)))
 
-# Publish
-res = client.publish("recipes", "42", example_data)
-print("Published:", res)
-
-# Fetch
-fetched = client.fetch("recipes", "42")
-print("Fetched:", fetched)
-
-# Print SHA256 hash
-hash_val = hashlib.sha256(str(fetched).encode()).hexdigest()
-print("SHA256 hash of fetched data:", hash_val)
+if __name__ == "__main__":
+    main()

@@ -1,32 +1,28 @@
-# sdk/pyclient/snep_client.py
-
 import requests
+import hashlib
 import json
-from utils.crypto import encrypt_message, decrypt_message
 
 class SNEPClient:
-    def __init__(self, key):
+    def __init__(self, key, nodes):
         self.key = key
-        self.nodes = ["http://localhost:5000", "http://localhost:5001"]
+        self.nodes = nodes
 
     def publish(self, collection, id, data):
-        encrypted = encrypt_message(self.key, json.dumps(data))
         results = []
-        for node_url in self.nodes:
+        for node in self.nodes:
             try:
-                r = requests.post(f"{node_url}/{collection}/{id}", json={"data": encrypted})
-                results.append({"node": node_url, "status": r.status_code})
+                r = requests.post(f"{node}/{collection}/{id}", json=data)
+                results.append({"node": node, "status": r.status_code})
             except Exception as e:
-                results.append({"node": node_url, "error": str(e)})
+                results.append({"node": node, "error": str(e)})
         return results
 
     def fetch(self, collection, id):
-        for node_url in self.nodes:
+        for node in self.nodes:
             try:
-                r = requests.get(f"{node_url}/{collection}/{id}")
+                r = requests.get(f"{node}/{collection}/{id}")
                 if r.status_code == 200:
-                    decrypted = decrypt_message(self.key, r.json()["data"])
-                    return json.loads(decrypted)
+                    return r.json()
             except:
                 continue
-        return None
+        return {}

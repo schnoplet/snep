@@ -1,19 +1,24 @@
-# demo/demo_app.py
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # ensure SNEP root is on path
 
-import json
 import hashlib
-from sdk.pyclient.snep_client import SNEPClient
-from utils.crypto import generate_key
+import json
+from pyclient.snep_client import SNEPClient  # updated import
+from utils.crypto import encrypt_message, decrypt_message
 
 def main():
-    key = generate_key()
-    client = SNEPClient(key=key)
+    key = b'mysecretkey123456'  # example symmetric key
+    client = SNEPClient(key=key)  # SNEPClient init no longer uses node_urls
 
-    example_data = {"recipe": "pumpkin soup", "steps": ["cut pumpkin", "boil", "blend"]}
+    example_data = {
+        "recipe": "pumpkin soup",
+        "steps": ["cut pumpkin", "boil", "blend"]
+    }
 
     print("Publishing data...")
-    res = client.publish("recipes", "42", example_data)
-    print("Published:", res)
+    published = client.publish("recipes", "42", example_data)
+    print("Published:", published)
 
     print("Fetching data...")
     fetched = client.fetch("recipes", "42")

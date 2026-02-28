@@ -1,15 +1,9 @@
 class Storage:
     def __init__(self):
-        self.db = {}
+        self.data = {}
 
-    def save(self, collection, item_id, data):
-        if collection not in self.db:
-            self.db[collection] = {}
-        self.db[collection][item_id] = data
-        return True
+    def save(self, key, value):
+        self.data[key] = value
 
-    def load(self, collection, item_id):
-        try:
-            return self.db[collection][item_id]
-        except KeyError:
-            return None
+    def get(self, key):
+        return self.data.get(key, {})

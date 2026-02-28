@@ -1,15 +1,16 @@
 @echo off
-echo Starting node1 server...
-start cmd /k python -m nodes.node1
+setlocal
 
-timeout /t 2
+echo Starting node1 server...
+start "Node1" cmd /k "python nodes\node1.py"
 
 echo Starting node2 server...
-start cmd /k python -m nodes.node2
+start "Node2" cmd /k "python nodes\node2.py"
 
-timeout /t 2
+timeout /t 3 /nobreak >nul
 
 echo Running demo client...
-python -W ignore -m demo.demo_app
+python demo\demo_app.py
 
+echo Demo finished.
 pause

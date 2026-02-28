@@ -1,5 +1,5 @@
+from .storage import Storage
 from flask import Flask, request, jsonify
-from storage import Storage
 
 app = Flask(__name__)
 store = Storage()

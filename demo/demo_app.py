@@ -1,12 +1,13 @@
+# demo/demo_app.py
+
+import json
+import hashlib
 from sdk.pyclient.snep_client import SNEPClient
-from utils.crypto import generate_key, sha256_hash
+from utils.crypto import generate_key
 
 def main():
     key = generate_key()
-    client = SNEPClient(
-        key=key,
-        node_urls=["http://localhost:5000", "http://localhost:5001"]
-    )
+    client = SNEPClient(key=key)
 
     example_data = {"recipe": "pumpkin soup", "steps": ["cut pumpkin", "boil", "blend"]}
 
@@ -18,8 +19,7 @@ def main():
     fetched = client.fetch("recipes", "42")
     print("Fetched:", fetched)
 
-    if fetched:
-        print("SHA256 hash of fetched data:", sha256_hash(str(fetched)))
+    print("SHA256 hash of fetched data:", hashlib.sha256(json.dumps(fetched).encode()).hexdigest())
 
 if __name__ == "__main__":
     main()

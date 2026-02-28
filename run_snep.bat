@@ -1,16 +1,15 @@
 @echo off
-setlocal
+echo Starting node1 server...
+start cmd /k python -m nodes.node1
 
-REM --- start node1 ---
-start "" cmd /k "python -W ignore -m nodes.node1 5000"
+timeout /t 2
 
-REM --- start node2 ---
-start "" cmd /k "python -W ignore -m nodes.node2 5001"
+echo Starting node2 server...
+start cmd /k python -m nodes.node2
 
-REM --- wait a few seconds for servers to start ---
-timeout /t 3 /nobreak >nul
+timeout /t 2
 
-REM --- run demo client ---
+echo Running demo client...
 python -W ignore -m demo.demo_app
 
 pause
